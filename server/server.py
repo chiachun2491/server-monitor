@@ -3,12 +3,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from device import NvidiaSMI, RAM
 
+from config import CONFIG
+
 app = FastAPI()
 
 origins = [
     "http://localhost:3000",
-    "http://140.118.127.80:3000",
 ]
+
+if CONFIG.get("origins") is not None:
+    origins = CONFIG.get("origins")
 
 app.add_middleware(
     CORSMiddleware,

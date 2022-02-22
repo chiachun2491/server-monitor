@@ -1,0 +1,33 @@
+version: '3.5'
+services:
+
+  master:
+    container_name: kdd-status-master
+    build: ./master
+    command: gunicorn -w 1 -b 0.0.0.0:8787 master:app
+    ports:
+      - "8787:8787"
+    restart: always
+    environment:
+      - TZ=Asia/Taipei
+    # env_file:
+    #   - .env
+
+  server:
+    container_name: kdd-status-server
+    build: ./server
+    command: gunicorn -w 1 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:23333 server:app
+    ports:
+      - "23333:23333"
+    restart: always
+    environment:
+      - TZ=Asia/Taipei
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+              driver: nvidia
+
+    # env_file:
+    #   - .env
